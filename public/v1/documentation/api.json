@@ -1,0 +1,909 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is documentatin for the Node API. For every request you must include in the header: \n Content-Type: application/json \n\n For protected routes by authorization we use JWT. Each of these have a lock by them. Must include a Bearer Token in the header \n Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ...",
+        "version": "1.0.0",
+        "title": "Rest Node API mongodb + JWT",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "email": "brian@orangetech.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "api.your-url.com",
+    "basePath": "/v1",
+    "tags": [{
+            "name": "user",
+            "description": "Authentication and More",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "http://orangetech.io"
+            }
+        },
+        {
+            "name": "countries",
+            "description": "create and update countries"
+        },
+        {
+            "name": "states",
+            "description": "create and update states"
+        },
+        {
+            "name": "cities",
+            "description": "create and update city"
+        }
+
+    ],
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "paths": {
+        "/users": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create user",
+                "description": "Creates user that can now be used for authentication",
+                "operationId": "createUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Creates user",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/CreateUser"
+                    }
+                }],
+                "responses": {
+                    "201": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/CreateUserResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid operation",
+                        "schema": {
+                            "$ref": "#/definitions/ApiErrorResponse"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Return user",
+                "description": "This can only be done by the logged in user.",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/ReturnUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update user",
+                "description": "This can only be done by the logged in user.",
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Creates user",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/UpdateUserBody"
+                    }
+                }],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful request",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Soft delete user",
+                "description": "This can only be done by the logged in user.",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/users/hard": {
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Hard delete user",
+                "description": "Remove user from database",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/users/restore": {
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Restore soft deleted user",
+                "description": "",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/users/login": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "User Login",
+                "description": "Returns Bearer Token for JWT authentication",
+                "operationId": "createUsersWithArrayInput",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "List of user object",
+                    "required": true,
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/CreateUser"
+                        }
+                    }
+                }],
+                "responses": {
+                    "204": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/LoginUserResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/ApiErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/countries": {
+            "post": {
+                "tags": [
+                    "countries"
+                ],
+                "summary": "Create country",
+                "description": "Creates country that can now store",
+                "operationId": "countries",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Creates country",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Countries"
+                    }
+                }],
+                "responses": {
+                    "201": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/CreateCountryResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid operation",
+                        "schema": {
+                            "$ref": "#/definitions/ApiErrorResponse"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "countries"
+                ],
+                "summary": "Return country",
+                "description": "This can only be return all country list.",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/ReturnUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "countries"
+                ],
+                "summary": "Update country",
+                "description": "This can only be done by the logged in user.",
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "update country",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/UpdateUserBody"
+                    }
+                }],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful request",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "countries"
+                ],
+                "summary": "Soft delete country",
+                "description": "This can only be done for delete country.",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/states": {
+            "post": {
+                "tags": [
+                    "states"
+                ],
+                "summary": "Create state",
+                "description": "Creates country that can now store",
+                "operationId": "states",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Creates States",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/States"
+                    }
+                }],
+                "responses": {
+                    "201": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/CreateStatesResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid operation",
+                        "schema": {
+                            "$ref": "#/definitions/ApiErrorResponse"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "states"
+                ],
+                "summary": "Return States",
+                "description": "This can only be return all States list.",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/ReturnUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "states"
+                ],
+                "summary": "Update states",
+                "description": "This can only be done by the logged in user.",
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "update states",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/UpdateUserBody"
+                    }
+                }],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful request",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "states"
+                ],
+                "summary": "Soft delete States",
+                "description": "This can only be done for delete States.",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/cities": {
+            "post": {
+                "tags": [
+                    "cities"
+                ],
+                "summary": "Create cities",
+                "description": "Creates cities that can now store",
+                "operationId": "cities",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Creates cities",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Cities"
+                    }
+                }],
+                "responses": {
+                    "201": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/CreateCitiesResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid operation",
+                        "schema": {
+                            "$ref": "#/definitions/ApiErrorResponse"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "cities"
+                ],
+                "summary": "Return Cities",
+                "description": "This can only be return all Cities list.",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/ReturnUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "cities"
+                ],
+                "summary": "Update Cities",
+                "description": "This can only be done by the logged in user.",
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "update Cities",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/UpdateUserBody"
+                    }
+                }],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful request",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "cities"
+                ],
+                "summary": "Soft delete Cities",
+                "description": "This can only be done for delete Cities.",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ApiSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ApiUnauthorizezdResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        }
+    },
+    "securityDefinitions": {
+        "bearer_auth": {
+            "type": "oauth2",
+            "authorizationUrl": "http://api.your-url.io/v1/user/login",
+            "flow": "implicit"
+        },
+        "api_key": {
+            "type": "apiKey",
+            "name": "api_key",
+            "in": "header"
+        }
+    },
+    "definitions": {
+        "Countries": {
+            "type": "object",
+            "properties": {
+                "countryName": {
+                    "type": "string",
+                    "example": "INDIA"
+                },
+                "countryCode": {
+                    "type": "string",
+                    "example": "IN"
+                },
+                "state": {
+                    "type": "string",
+                    "example": "in.jpg"
+                }
+            }
+        },
+        "States": {
+            "type": "object",
+            "properties": {
+                "stateName": {
+                    "type": "string",
+                    "example": "Utter Prades"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "5b64792806ff811e1f06f001"
+                }
+            }
+        },
+        "Cities": {
+            "type": "object",
+            "properties": {
+                "cityName": {
+                    "type": "string",
+                    "example": "Noida"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "5b64792806ff811e1f06f001"
+                },
+                "state": {
+                    "type": "string",
+                    "example": "5b6479ab06ff811e1f06f137"
+                }
+            }
+        },
+        "CreateUser": {
+            "type": "object",
+            "properties": {
+                "unique_key | userEmail | userPhone": {
+                    "type": "string",
+                    "example": "8885678345"
+                },
+                "userPassword": {
+                    "type": "string",
+                    "example": "secure-password"
+                }
+            }
+        },
+        "CreateCountryResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Successfully created new country."
+                }
+            }
+        },
+        "CreateStatesResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Successfully created new state."
+                }
+            }
+        },
+        "CreateCitiesResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Successfully created new city."
+                }
+            }
+        },
+        "CreateUserResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Successfully created new user."
+                },
+                "token": {
+                    "type": "string",
+                    "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ...",
+                    "description": "Authentication token"
+                }
+            }
+        },
+        "LoginUserResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "token": {
+                    "type": "string",
+                    "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ...",
+                    "description": "Authentication token"
+                }
+
+            }
+        },
+        "ReturnUserResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "user": {
+                    "type": "object",
+                    "properties": {
+                        "userFirstName": {
+                            "type": "string",
+                            "example": "John"
+                        },
+                        "userLastName": {
+                            "type": "string",
+                            "example": "doe"
+                        },
+                        "userEmail": {
+                            "type": "string",
+                            "example": "john.doe@gmail.com"
+                        },
+                        "userPhone": {
+                            "type": "string",
+                            "example": "8889401234"
+                        }
+                    }
+                }
+            }
+        },
+        "UpdateUserBody": {
+            "type": "object",
+            "properties": {
+                "first": {
+                    "type": "string",
+                    "example": "John"
+                },
+                "last": {
+                    "type": "string",
+                    "example": "doe"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "john.doe@gmail.com"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "8889401234"
+                }
+            }
+        },
+        "ApiErrorResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "ApiSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "ApiUnauthorizezdResponse": {
+            "type": "string",
+            "example": "Unauthorized"
+        },
+        "ApiResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "externalDocs": {
+        "description": "Find out more about Orange Tech",
+        "url": "http://orangetech.io"
+    }
+}
